@@ -1,10 +1,18 @@
 package vistas;
 
+import components.menus.NavBarItem;
 import components.surfaces.Card;
 import controladores.ControlTema;
 import controladores.listas.ListaTemas;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import modelos.Recurso;
 import modelos.Tema;
 
@@ -15,6 +23,7 @@ import modelos.Tema;
 public class Inicio extends javax.swing.JFrame {
     public String motorDB;
     private ControlTema controlTema;
+    private JPopupMenu popupBusqueda;
     /**
      * Creates new form Main
      */
@@ -27,10 +36,15 @@ public class Inicio extends javax.swing.JFrame {
         
         this.motorDB = motorDB;
         controlTema = new ControlTema(motorDB);
+        
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.WHITE);
         
         busqueda.setPlaceholder("Buscar");
+        busqueda.requestFocus();
+        
+        popupBusqueda = new JPopupMenu();
+        popupBusqueda.setBackground(Color.white);
     }
 
     @Override
@@ -48,7 +62,6 @@ public class Inicio extends javax.swing.JFrame {
             ListaTemas temas = controlTema.obtenerMasConsultados();
             if(temas.getLength() > 0){
                 panelCartas.removeAll();
-
                 for(int i = 0; i < temas.getLength(); i++){
                     Tema tema = temas.obtener(i);
                     Recurso recurso = tema.getRecursos().obtener(0);
@@ -57,8 +70,17 @@ public class Inicio extends javax.swing.JFrame {
                     carta.setContent(tema.getDescripcion());
                     carta.setImage(recurso.getRuta());
                     carta.link.setText("Ver más");
+                    //Evento del link de la carta
+                    carta.link.addMouseListener(new MouseAdapter(){
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            //System.out.println(tema.getId());
+                        }
+                        
+                    });
                     panelCartas.add(carta);
                 }
+                setSize(new Dimension(941, 666));
             }
         }catch(Exception ex){
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -66,7 +88,26 @@ public class Inicio extends javax.swing.JFrame {
             throw ex;
         }
     }
-
+    
+    private void limpiarPopupBusqueda(){
+        popupBusqueda.setVisible(false);
+        popupBusqueda.removeAll();
+    }
+    
+    private JMenuItem getSearchItem(Tema tema){
+        JMenuItem item = new NavBarItem(tema.getTitulo());
+        item.addActionListener(e -> busqueda.setText(item.getText()));
+        item.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    busqueda.setText(item.getText());
+                }
+            }
+        });
+        
+        return item;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -77,9 +118,7 @@ public class Inicio extends javax.swing.JFrame {
     private void initComponents() {
 
         panelCartas = new javax.swing.JPanel();
-        card1 = new components.surfaces.Card();
-        card2 = new components.surfaces.Card();
-        card3 = new components.surfaces.Card();
+        jLabel2 = new javax.swing.JLabel();
         btnBuscar = new components.buttons.PrimaryButton();
         busqueda = new components.inputs.TextInput();
         jLabel1 = new javax.swing.JLabel();
@@ -91,21 +130,36 @@ public class Inicio extends javax.swing.JFrame {
         setResizable(false);
         setSize(new java.awt.Dimension(0, 0));
 
+        panelCartas.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         panelCartas.setOpaque(false);
         panelCartas.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 32, 5));
-        panelCartas.add(card1);
-        panelCartas.add(card2);
-        panelCartas.add(card3);
+
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel2.setText("Temas no encontrados");
+        jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(32, 0, 32, 0));
+        panelCartas.add(jLabel2);
 
         btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/search_white.png"))); // NOI18N
         btnBuscar.setText("");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
+        busqueda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                busquedaKeyReleased(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         jLabel1.setText("Más consultados");
 
         titulo.setFont(new java.awt.Font("SansSerif", 0, 56)); // NOI18N
         titulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        titulo.setText("Aplicacion");
+        titulo.setText("Compuwiki");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -122,35 +176,69 @@ public class Inicio extends javax.swing.JFrame {
                 .addGap(0, 48, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(titulo)
-                        .addGap(345, 345, 345))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(248, 248, 248))))
+                .addComponent(busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(248, 248, 248))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(327, 327, 327)
+                .addComponent(titulo)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(barraApp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58)
+                .addGap(60, 60, 60)
                 .addComponent(titulo)
-                .addGap(54, 54, 54)
+                .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(46, 46, 46)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelCartas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(165, Short.MAX_VALUE))
+                .addComponent(panelCartas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void busquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_busquedaKeyReleased
+        // TODO add your handling code here:
+        //if(!evt.isActionKey()) limpiarPopupBusqueda(); 
+        
+        String text = busqueda.getText().trim();
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) return;
+        limpiarPopupBusqueda();
+        if(!text.isEmpty()){
+            try{
+                ListaTemas temas = controlTema.buscarTitulos(text);
+                if(temas.getLength() > 0){
+                    for(int i = 0; i < temas.getLength(); i++){
+                        popupBusqueda.add(getSearchItem(temas.obtener(i)));
+                    }
+                    popupBusqueda.show(busqueda, 0, busqueda.getHeight());
+                }
+                
+            }catch(Exception ex){
+                System.out.println(ex.toString());
+            }
+        }
+        if(!evt.isActionKey())busqueda.requestFocus();
+    }//GEN-LAST:event_busquedaKeyReleased
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        // TODO add your handling code here:
+        String text = busqueda.getText().trim();
+        if(!text.isEmpty()){
+            try{
+                
+            }catch(Exception ex){
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -192,10 +280,8 @@ public class Inicio extends javax.swing.JFrame {
     private vistas.BarraApp barraApp1;
     private components.buttons.PrimaryButton btnBuscar;
     private components.inputs.TextInput busqueda;
-    private components.surfaces.Card card1;
-    private components.surfaces.Card card2;
-    private components.surfaces.Card card3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel panelCartas;
     private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables

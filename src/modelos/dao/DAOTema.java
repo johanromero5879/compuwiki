@@ -84,4 +84,32 @@ public class DAOTema extends DAOControlador{
         
         return temas;
     }
+    
+    public ListaTemas buscarTitulos(String filtro) throws Exception{
+        ListaTemas temas = new ListaTemas();
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        
+        try{
+            conectar();
+            String sql = "SELECT id, titulo FROM temas WHERE lower(titulo) LIKE ? ORDER BY titulo";
+            st = getConn().prepareStatement(sql);
+            st.setString(1, "%"+filtro+"%");
+            rs = st.executeQuery();
+            while(rs.next()){
+                Tema tema = new Tema();
+                tema.setId(rs.getInt("id"));
+                tema.setTitulo(rs.getString("titulo"));
+                temas.agregar(tema);
+            }
+        }catch(Exception ex){
+            throw ex;
+        }finally{
+            if (st != null) st.close();
+            if (rs != null) rs.close();
+            desconectar();
+        }
+        
+        return temas;
+    }
 }

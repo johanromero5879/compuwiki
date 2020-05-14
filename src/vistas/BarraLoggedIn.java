@@ -19,7 +19,7 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
     /**
      * Creates new form BarraLoggedIn
      */
-    public BarraLoggedIn() {
+    public BarraLoggedIn(){
         this(null);
     }
     
@@ -53,11 +53,11 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
     private void crearPopupMenu(){
         popupMenu = new JPopupMenu();
         itemCrearTema = new NavBarItem("Crear tema");
-        itemEditarTema = new NavBarItem("Editar tema");
+        //itemEditarTema = new NavBarItem("Editar tema");
         popupMenu.add(itemCrearTema);
-        popupMenu.add(itemEditarTema);
+        //popupMenu.add(itemEditarTema);
         itemCrearTema.addActionListener(this);
-        itemEditarTema.addActionListener(this);
+        //itemEditarTema.addActionListener(this);
     }
 
     /**
@@ -123,10 +123,9 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(rol, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(rol, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
