@@ -16,6 +16,7 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
     Usuario usuario;
     JPopupMenu popupUsuario, popupMenu;
     JMenuItem itemCerrarSesion, itemCrearTema, itemEditarTema, itemSalir;
+    Crear crear=new Crear();
     /**
      * Creates new form BarraLoggedIn
      */
@@ -165,6 +166,8 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
             }
         }else if(e.getSource().equals(itemSalir)){
             System.exit(0);
+        }else if(e.getSource().equals(itemCrearTema)){
+                crear.setVisible(true);
         }
     }
 }

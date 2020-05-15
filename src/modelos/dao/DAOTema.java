@@ -8,6 +8,7 @@ package modelos.dao;
 import controladores.listas.ListaTemas;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 import modelos.Recurso;
 import modelos.Tema;
 
@@ -16,7 +17,6 @@ import modelos.Tema;
  * @author Johan
  */
 public class DAOTema extends DAOControlador{
-    
     public DAOTema(String motor) {
         super(motor);
     }
@@ -84,8 +84,53 @@ public class DAOTema extends DAOControlador{
         
         return temas;
     }
+    public int AgregarTema(String titulo,String descripcion,String referencias,int Visitas) throws Exception{
+        String sql_insert="INSERT INTO temas(titulo,descripcion,referencias,visitas) values(?,?,?,?)";
+        PreparedStatement ps;
+        int v=0;
+        try{
+            this.conectar();
+            ps=getConn().prepareStatement(sql_insert);
+            ps.setString(1, titulo);
+            ps.setString(2, descripcion);
+            ps.setString(3,referencias);
+            ps.setInt(4, Visitas);
+            v=ps.executeUpdate();
+            if(v>0){
+                JOptionPane.showMessageDialog(null,"Se ha agregado con exito el tema");
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null,"error primario "+e.getMessage());
+        }finally{
+            ps=null;
+            this.desconectar();
+        }
+        return v;
+    }
+    public int ObtenerID(String titulo) throws Exception{
+        ResultSet rs = null;
+        PreparedStatement st = null;
+        String sql_select="SELECT id FROM temas WHERE titulo = ?";
+        int id=0;
+        try{
+            this.conectar();
+            st = getConn().prepareStatement(sql_select);
+            st.setString(1, titulo);
+            rs = st.executeQuery();
+            if(rs.first()){
+                id=rs.getInt("id");
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "error "+e.getMessage());
+        }finally{
+            st=null;
+            this.desconectar();
+        }
+        return id;
     
-    public ListaTemas buscarTitulos(String filtro) throws Exception{
+    }
+    
+    public ListaTemas buscarTitulos(String filtro) throws Exception {
         ListaTemas temas = new ListaTemas();
         PreparedStatement st = null;
         ResultSet rs = null;

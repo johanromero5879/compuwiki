@@ -17,7 +17,7 @@ public class Crear extends javax.swing.JFrame{
     PanelCrear_2 aux;
     ArrayList<PanelCrear_2> lista=new ArrayList();
     int auxTema=0;
-    ControlTema tema=new ControlTema("MySQL");
+    ControlTema tema;
     ControlRecursos rec;
     ControlSecciones sec;
     
@@ -175,10 +175,11 @@ public class Crear extends javax.swing.JFrame{
     }//GEN-LAST:event_VolverActionPerformed
 
     private void ContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ContinuarActionPerformed
-        Volver.setEnabled(false);
         boolean ap=p1.vacio();
         boolean op=p1.verficarImagen();
         if(ap==true && op==true){
+            Volver.setEnabled(false);
+            Continuar.setEnabled(false);
             Terminar.setEnabled(true);
             p1.setVisible(false);
             p2.setVisible(true);
@@ -197,7 +198,6 @@ public class Crear extends javax.swing.JFrame{
         }else{
             JOptionPane.showMessageDialog(null,"Por favor rellene todos los campos, antes de continuar");
         }
-        Continuar.setEnabled(false);
     }//GEN-LAST:event_ContinuarActionPerformed
 
     private void TerminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TerminarActionPerformed
