@@ -8,6 +8,7 @@ package modelos.dao;
 import controladores.listas.ListaRecursos;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 import modelos.Recurso;
 
 /**
@@ -15,7 +16,6 @@ import modelos.Recurso;
  * @author Johan
  */
 public class DAORecurso extends DAOControlador{
-    
     public DAORecurso(String motor) {
         super(motor);
     }
@@ -57,5 +57,28 @@ public class DAORecurso extends DAOControlador{
         }
         
         return recursos;
+    }
+    public int AgregarRecurso(int tema, String ruta,String tipo) throws Exception{
+        PreparedStatement ps;
+        String sql_insert="INSERT INTO recursos(tema,ruta,tipo) values(?,?,?)";
+        try{
+            this.conectar();
+            ps=getConn().prepareStatement(sql_insert);
+            ps.setInt(1, tema);
+            ps.setString(2, ruta);
+            ps.setString(3, tipo);
+            int v=ps.executeUpdate();
+            if(v>0){
+                JOptionPane.showMessageDialog(null,"Se ha agregado con exito el recurso");
+            }else{
+                JOptionPane.showMessageDialog(null,"error, no ha sido posible subir esos datos");
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null,"error "+e.getMessage());
+        }finally{
+            ps=null;
+            this.desconectar();
+        }
+        return 0;
     }
 }

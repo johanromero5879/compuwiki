@@ -16,6 +16,7 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
     Usuario usuario;
     JPopupMenu popupUsuario, popupMenu;
     JMenuItem itemCerrarSesion, itemCrearTema, itemEditarTema, itemSalir;
+    Crear crear=new Crear();
     /**
      * Creates new form BarraLoggedIn
      */
@@ -123,10 +124,9 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(rol, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(rol, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -166,6 +166,8 @@ class BarraLoggedIn extends javax.swing.JPanel implements ActionListener{
             }
         }else if(e.getSource().equals(itemSalir)){
             System.exit(0);
+        }else if(e.getSource().equals(itemCrearTema)){
+                crear.setVisible(true);
         }
     }
 }
