@@ -3,11 +3,18 @@ package vistas;
 import components.styles.Theme;
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 public class PanelCrear_1 extends javax.swing.JPanel {
     String ruta="";
-    public PanelCrear_1() {
+    public PanelCrear_1(){
         this.setBackground(Color.WHITE);
         initComponents();
         Descripcion.setPlaceholder("El texto....");
@@ -50,8 +57,19 @@ public class PanelCrear_1 extends javax.swing.JPanel {
     public String getTitulo() {
         return Titulo.getText();
     }
-    
-
+    public boolean copiarImage(String fuente,String destino){
+        boolean ver=false;
+          try{
+                Path fuente_con=Paths.get(fuente);
+                Path destino_con=Paths.get(destino);
+                Files.copy(fuente_con, destino_con, StandardCopyOption.COPY_ATTRIBUTES);
+                ver=false;
+          }catch(IOException e){
+                JOptionPane.showMessageDialog(null,"error "+e.getMessage());
+                ver=true;
+          }
+        return ver;  
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -181,9 +199,11 @@ public class PanelCrear_1 extends javax.swing.JPanel {
     }//GEN-LAST:event_TituloActionPerformed
 
     private void AdjuntarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AdjuntarActionPerformed
+        //String destino_ruta="files/recursos/"+c+"/image_1.png";
         ruta="";
         JFileChooser jf=new JFileChooser();
-        jf.addChoosableFileFilter(new FileNameExtensionFilter("Imagenes", "jpg","png","gif"));
+        jf.setAcceptAllFileFilterUsed(false);
+        jf.setFileFilter(new FileNameExtensionFilter("Imagenes", "jpg","png","gif"));
         int seleccion=jf.showOpenDialog(this);
         if(seleccion==JFileChooser.APPROVE_OPTION){
             File imagen= jf.getSelectedFile();
