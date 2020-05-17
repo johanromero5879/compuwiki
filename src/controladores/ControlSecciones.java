@@ -5,7 +5,7 @@ import modelos.dao.DAOSeccion;
 import vistas.PanelCrear_2;
 
 public class ControlSecciones {
-     DAOSeccion seccion;
+    DAOSeccion seccion;
     PanelCrear_2 p2=new PanelCrear_2();
     public ControlSecciones(String control) {
         seccion=new DAOSeccion(control);

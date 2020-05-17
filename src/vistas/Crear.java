@@ -6,6 +6,7 @@ import controladores.ControlRecursos;
 import controladores.ControlSecciones;
 import controladores.ControlTema;
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -189,7 +190,22 @@ public class Crear extends javax.swing.JFrame{
                 tema.IngresarTemas(p1.getTitulo(),p1.getDescripcion(),p1.getReferencias(),0);
                 auxTema=tema.getAux();
                 System.out.println(auxTema);
-                rec.AgregarRecurso(auxTema, p1.ruta,"Image");
+                File directorio=new File("files/recursos/"+auxTema);
+                if(!directorio.exists()){
+                    if(directorio.mkdirs()){
+                        System.out.println("se ha creado un nuevo directorio");
+                    }else{
+                        System.out.println("No se ha podido crear un nuevo directorio");
+                    }
+                }
+                String destino="files/recursos/"+auxTema+"/image_1.png";
+                boolean ver=p1.copiarImage(p1.getRuta(),destino);
+                if(ver==false){
+                   rec.AgregarRecurso(auxTema, destino,"Image"); 
+                }else{
+                   JOptionPane.showMessageDialog(null,"error no ha sido posible la adicion de la imagen");
+                }
+                
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null,"error"+ex.getMessage());
             }
@@ -201,6 +217,7 @@ public class Crear extends javax.swing.JFrame{
     }//GEN-LAST:event_ContinuarActionPerformed
 
     private void TerminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TerminarActionPerformed
+        boolean ted=false;
         p1.limpiar(0);
         if(p2.vacio()!=false){
             int confirmacion=JOptionPane.showConfirmDialog(null,"Deseas terminar de agregar secciones? \n"
@@ -221,12 +238,19 @@ public class Crear extends javax.swing.JFrame{
                     for(int i=0;i<lista.size();i++){
                         try {  
                             sec.AgregarSeccion(auxTema, lista.get(i).getTituloAux(),lista.get(i).getDescripcionAux());
+                            ted=true;
+                            
                         } catch (Exception ex) {
                             Logger.getLogger(Crear.class.getName()).log(Level.SEVERE, null, ex);
+                            ted=false;
                         }finally{
                             System.out.println(lista.get(i).getTituloAux());
                             System.out.println(lista.get(i).getDescripcionAux());
                         }
+                    }
+                    if(ted==true){
+                        JOptionPane.showMessageDialog(null, "Se ha agregado con exito "+lista.size()+" secciones");
+                    }else{
                     }
                     break;
                 case JOptionPane.NO_OPTION:

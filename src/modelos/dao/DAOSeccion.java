@@ -52,7 +52,7 @@ public class DAOSeccion extends DAOControlador{
                 ps.setString(3, descripcion);
                 int v=ps.executeUpdate();
                 if(v>0){
-                    JOptionPane.showMessageDialog(null,"Se ha agregado con exito las secciones");
+                    System.out.println("Se ha agregado con exito las secciones");
                 }else{
                     JOptionPane.showMessageDialog(null,"error, no ha sido posible subir esos datos");
                 }
