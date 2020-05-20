@@ -22,7 +22,14 @@ public class Crear extends javax.swing.JFrame{
     ControlRecursos rec;
     ControlSecciones sec;
     
-    public Crear() {
+    Inicio parent;
+    
+    public Crear(){
+        this(null);
+    }
+    
+    public Crear(Inicio parent){
+        this.parent = parent;
         this.getContentPane().setBackground(Color.WHITE);
         initComponents();
         Contenedor.add(p1);
@@ -34,6 +41,7 @@ public class Crear extends javax.swing.JFrame{
         sec=new ControlSecciones("MySQL");
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -173,8 +181,21 @@ public class Crear extends javax.swing.JFrame{
         this.setVisible(false);
         JOptionPane.showMessageDialog(null,"La informacion sin previo guardado se perdera",null,JOptionPane.WARNING_MESSAGE);
         p1.limpiar(0);
+        dispose();
     }//GEN-LAST:event_VolverActionPerformed
-
+    
+    /**
+     * Actualizar  los temas mas consultados de la interfaz principal
+     * @author Johan Romero
+     */
+    private void actualizarTemasMasConsultados(){
+        try{
+            if(parent != null) parent.mostrarConsultados();
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     private void ContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ContinuarActionPerformed
         boolean ap=p1.vacio();
         boolean op=p1.verficarImagen();
@@ -189,19 +210,19 @@ public class Crear extends javax.swing.JFrame{
             try {
                 tema.IngresarTemas(p1.getTitulo(),p1.getDescripcion(),p1.getReferencias(),0);
                 auxTema=tema.getAux();
-                System.out.println(auxTema);
+                //System.out.println(auxTema);
                 File directorio=new File("files/recursos/"+auxTema);
                 if(!directorio.exists()){
                     if(directorio.mkdirs()){
-                        System.out.println("se ha creado un nuevo directorio");
+                        //System.out.println("se ha creado un nuevo directorio");
                     }else{
-                        System.out.println("No se ha podido crear un nuevo directorio");
+                        //System.out.println("No se ha podido crear un nuevo directorio");
                     }
                 }
                 String destino="files/recursos/"+auxTema+"/image_1.png";
                 boolean ver=p1.copiarImage(p1.getRuta(),destino);
                 if(ver==false){
-                   rec.AgregarRecurso(auxTema, destino,"Image"); 
+                   rec.AgregarRecurso(auxTema, destino,"image"); 
                 }else{
                    JOptionPane.showMessageDialog(null,"error no ha sido posible la adicion de la imagen");
                 }
@@ -244,12 +265,13 @@ public class Crear extends javax.swing.JFrame{
                             Logger.getLogger(Crear.class.getName()).log(Level.SEVERE, null, ex);
                             ted=false;
                         }finally{
-                            System.out.println(lista.get(i).getTituloAux());
-                            System.out.println(lista.get(i).getDescripcionAux());
+                            //System.out.println(lista.get(i).getTituloAux());
+                            //System.out.println(lista.get(i).getDescripcionAux());
                         }
                     }
                     if(ted==true){
                         JOptionPane.showMessageDialog(null, "Se ha agregado con exito "+lista.size()+" secciones");
+                        actualizarTemasMasConsultados();
                     }else{
                     }
                     break;
