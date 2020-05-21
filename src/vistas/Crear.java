@@ -59,7 +59,7 @@ public class Crear extends javax.swing.JFrame{
         jPanel1.setBackground(Theme.PRIMARY);
 
         Volver.setBackground(Theme.PRIMARY);
-        Volver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/exit_white.png"))); // NOI18N
+        Volver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/back_white.png"))); // NOI18N
         Volver.setText("Volver");
         Volver.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
