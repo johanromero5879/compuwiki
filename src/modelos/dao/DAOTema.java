@@ -237,4 +237,39 @@ public class DAOTema extends DAOControlador{
         
         return temas;
     }
+    
+    public boolean incrementarVisitas(int id) throws Exception{
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        boolean result = false;
+        try{
+            conectar();
+            
+            String sql = "SELECT visitas FROM temas WHERE id=? ";
+            sql += getLimitSQL(1);
+            st = getConn().prepareStatement(sql);
+            st.setInt(1, id);
+            rs = st.executeQuery();
+            
+            if(rs.next()){
+                int visitas = rs.getInt("visitas") + 1;
+                rs.close();
+                st.close();
+                sql = "UPDATE temas SET visitas=? WHERE id=?";
+                st = getConn().prepareStatement(sql);
+                st.setInt(1, visitas);
+                st.setInt(2, id);
+                st.executeUpdate();
+                result = true;
+            }
+        }catch(Exception ex){
+            throw ex;
+        }finally{
+            if (st != null) st.close();
+            if (rs != null) rs.close();
+            desconectar();
+        }
+        
+        return result;
+    }
 }
