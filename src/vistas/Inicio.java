@@ -50,6 +50,8 @@ public class Inicio extends javax.swing.JFrame {
     @Override
     public void setVisible(boolean b) {
         try {
+            busqueda.setText("");
+            busqueda.requestFocus();
             mostrarConsultados();
         } catch (Exception ex) {
             b = false;

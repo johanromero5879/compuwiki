@@ -36,7 +36,15 @@ public class ControlTema {
             aux=daoTema.ObtenerID(titulo);
         }else{}
     }
-
+    
+    public int obtenerId(String titulo) throws Exception{
+        return daoTema.ObtenerID(titulo);
+    }
+    
+    public boolean incrementarVisitas(int id) throws Exception{
+        return daoTema.incrementarVisitas(id);
+    }
+    
     public int getAux() {
         return aux;
     }

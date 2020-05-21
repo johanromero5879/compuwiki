@@ -9,70 +9,118 @@ import components.styles.Theme;
 import controladores.ControlTema;
 import controladores.listas.ListaRecursos;
 import controladores.listas.ListaSecciones;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import modelos.Tema;
 
 public class informacion extends javax.swing.JFrame {
 
     ControlTema mostrar = new ControlTema("MySQL");
     Tema tema = null;
-
+    Inicio parent;
     public informacion() {
-        
-        this(3);
-
+        this(null);
     }
-
-    public informacion(int id) {
+    
+    public informacion(Inicio parent){
+        this(parent, null);
+    } 
+            
+    public informacion(Inicio parent, Tema tema) {
         initComponents();
-
+        this.tema = tema;
+        this.parent = parent;
         this.setTitle("Informacion");
         this.getContentPane().setBackground(getBackground());
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-
+        
+        logo.setHoverground(logo.getBackground());
+        btnVolver.setHoverground(Theme.PDARK);
+        
         jScrollPane2.getVerticalScrollBar().setUI(new ScrollBarV());
-
-        try {
-            tema = mostrar.TemasAmostrar(id);
-            imprimir();
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "No se a encontrado el tema");
-
-        }
-
     }
 
-    public void imprimir() {
-
-        ListaSecciones secciones = tema.getSecciones();
-
-        String html = "";
-        html += "<h1>" + tema.getTitulo() + "</h1>";
-        html += "<p>" + tema.getDescripcion().replaceAll("\\n", "<br>") + "</p>";
-
-        for (int i = 0; i < secciones.getLength(); i++) {
-            html += "<h2>" + secciones.obtener(i).getTitulo() + "</h2>";
-            html += "<p>" + secciones.obtener(i).getDescripcion().replaceAll("\\n", "<br>") + "</p>";
-            JButton boton1 = new TextButton(secciones.obtener(i).getTitulo());
-            contenido.add(boton1);
-
+    @Override
+    public void setVisible(boolean b) {
+        try{
+            imprimir();
+        }catch(Exception ex){
+            cerrar();
+            b = false;
         }
-        html += "<h2>Referencias</h2>";
+        super.setVisible(b); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void imprimir() throws Exception{
+        try{
+            mostrar.incrementarVisitas(tema.getId());
+            
+            ListaSecciones secciones = tema.getSecciones();
 
-        html += "<i>" + tema.getReferencias() + "</i>";
-        Caracteristicas.setText(html);
+            String html = "";
+            html += "<body style=\"font-family:sans-serif; padding: 8px; padding-top: 0px\">";
+            html += "<h1>" + tema.getTitulo() + "</h1>";
+            html += "<p>" + tema.getDescripcion().replaceAll("\\n", "<br>") + "</p>";
 
-        ListaRecursos imagenes = tema.getRecursos();
+            for (int i = 0; i < secciones.getLength(); i++) {
+                html += "<h2>" + secciones.obtener(i).getTitulo() + "</h2>";
+                html += "<p>" + secciones.obtener(i).getDescripcion().replaceAll("\\n", "<br>") + "</p>";
+                //Llena la tabla derecha de contenidos
+                crearBotonContenido(secciones.obtener(i).getTitulo());
+            }
+            //Crea el boton de referencias
+            crearBotonContenido("Referencias");
+            
+            //Agrega las referencias del tema al final
+            html += "<h2>Referencias</h2>";
 
-        ImageIcon imagen1 = new ImageIcon(imagenes.obtener(0).getRuta());
-        Icon icon = new ImageIcon(imagen1.getImage().getScaledInstance(jLabel1.getWidth(), jLabel1.getHeight(), Image.SCALE_DEFAULT));
-        jLabel1.setIcon(icon);
-        Caracteristicas.setCaretPosition(0);
+            html += "<i>" + tema.getReferencias() + "</i>";
+            
+            html += "</body>";
+            Caracteristicas.setText(html);
+
+            ListaRecursos imagenes = tema.getRecursos();
+
+            ImageIcon imagen1 = new ImageIcon(imagenes.obtener(0).getRuta());
+            Icon icon = new ImageIcon(imagen1.getImage().getScaledInstance(jLabel1.getWidth(), jLabel1.getHeight(), Image.SCALE_DEFAULT));
+            jLabel1.setIcon(icon);
+            Caracteristicas.setCaretPosition(0);
+        }catch(Exception ex){
+            if(!ex.getMessage().isEmpty()){
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            throw ex;
+        }
+    }
+    
+    /**
+     * Llena la tabla derecha de contenidos con los titulos dados
+     * @param titulo 
+     */
+    private void crearBotonContenido(String titulo){
+        JButton boton1 = new TextButton();
+        boton1.setMaximumSize(new Dimension(150, 800));
+        boton1.setForeground(Color.GRAY);
+        boton1.setHorizontalAlignment(SwingConstants.LEFT);
+        boton1.setHorizontalTextPosition(SwingConstants.LEFT);
+        String html = "";
+        html += "<html>";
+        html += "<div style=\"margin-bottom: 8px; text-align: left;\">"+titulo+"</div>";
+        html += "</html>";
+        boton1.setText(html);
+        
+        contenido.add(boton1);
+    }
+    
+    public void cerrar(){
+        if(parent != null) parent.setVisible(true);
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -86,11 +134,16 @@ public class informacion extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         Caracteristicas = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
-        primaryButton1 = new components.buttons.PrimaryButton();
-        primaryButton2 = new components.buttons.PrimaryButton();
+        btnVolver = new components.buttons.PrimaryButton();
+        logo = new components.buttons.PrimaryButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -125,25 +178,26 @@ public class informacion extends javax.swing.JFrame {
 
         Caracteristicas.setEditable(false);
         Caracteristicas.setContentType("text/html");
+        Caracteristicas.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jScrollPane2.setViewportView(Caracteristicas);
 
         jPanel1.setBackground(Theme.PRIMARY);
 
-        primaryButton1.setBackground(Theme.PRIMARY);
-        primaryButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/login_white.png"))); // NOI18N
-        primaryButton1.setText("Volver");
-        primaryButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnVolver.setBackground(Theme.PRIMARY);
+        btnVolver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/back_white.png"))); // NOI18N
+        btnVolver.setText("Volver");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                primaryButton1ActionPerformed(evt);
+                btnVolverActionPerformed(evt);
             }
         });
 
-        primaryButton2.setBackground(Theme.PRIMARY);
-        primaryButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/book_white.png"))); // NOI18N
-        primaryButton2.setText("Compuwiki");
-        primaryButton2.addActionListener(new java.awt.event.ActionListener() {
+        logo.setBackground(Theme.PRIMARY);
+        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconos/book_white.png"))); // NOI18N
+        logo.setText("Compuwiki");
+        logo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                primaryButton2ActionPerformed(evt);
+                logoActionPerformed(evt);
             }
         });
 
@@ -152,15 +206,15 @@ public class informacion extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(primaryButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(primaryButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(primaryButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(primaryButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnVolver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -192,13 +246,18 @@ public class informacion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void primaryButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_primaryButton1ActionPerformed
-        dispose();        // TODO add your handling code here:
-    }//GEN-LAST:event_primaryButton1ActionPerformed
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        cerrar();
+    }//GEN-LAST:event_btnVolverActionPerformed
 
-    private void primaryButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_primaryButton2ActionPerformed
+    private void logoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_primaryButton2ActionPerformed
+    }//GEN-LAST:event_logoActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        cerrar();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -243,14 +302,14 @@ public class informacion extends javax.swing.JFrame {
     //</editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane Caracteristicas;
+    private components.buttons.PrimaryButton btnVolver;
     private javax.swing.JPanel contenido;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
-    private components.buttons.PrimaryButton primaryButton1;
-    private components.buttons.PrimaryButton primaryButton2;
+    private components.buttons.PrimaryButton logo;
     // End of variables declaration//GEN-END:variables
 private vistas.BarraLoggedIn cuadro1;
 
