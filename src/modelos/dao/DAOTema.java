@@ -5,6 +5,8 @@
  */
 package modelos.dao;
 
+import controladores.listas.ListaRecursos;
+import controladores.listas.ListaSecciones;
 import controladores.listas.ListaTemas;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +23,11 @@ public class DAOTema extends DAOControlador{
         super(motor);
     }
     
+    /**
+     * @author Johan Romero
+     * @return
+     * @throws Exception 
+     */
     public ListaTemas obtenerMasConsultados() throws Exception{
         ListaTemas temas = new ListaTemas();
         PreparedStatement st = null;
@@ -54,6 +61,56 @@ public class DAOTema extends DAOControlador{
         return temas;
     }
     
+    /**
+     * @author Carlos Riaño
+     * @param id
+     * @return
+     * @throws Exception 
+     */
+    public Tema TemasAmostrar(int id) throws Exception {
+        Tema parametro = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        DAOSeccion daoseccion = new DAOSeccion("MySQL");
+        DAORecurso daorecurso = new DAORecurso("MySQL");
+        try {
+            conectar();
+            String sql = "SELECT id,titulo,descripcion,referencias FROM temas WHERE id=?";
+            st = getConn().prepareStatement(sql);
+            st.setInt(1, id);
+            rs = st.executeQuery();
+            while (rs.next()) {
+                parametro = new Tema();
+                parametro.setId(rs.getInt("id"));
+                parametro.setTitulo(rs.getString("titulo"));
+                parametro.setDescripcion(rs.getString("descripcion"));
+                parametro.setReferencias(rs.getString("referencias"));
+                ListaSecciones ob1 = daoseccion.buscarSecciones(id);
+                parametro.setSecciones(ob1);
+                ListaRecursos ob2 = daorecurso.buscarRecursos(id);
+                parametro.setRecursos(ob2);
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            if (st != null) {
+                st.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+            desconectar();
+        }
+
+        return parametro;
+    }
+    
+    /**
+     * @author Johan Romero
+     * @param origen
+     * @return
+     * @throws Exception 
+     */
     public ListaTemas buscarSubtemas(int origen) throws Exception{
         ListaTemas temas = new ListaTemas();
         PreparedStatement st = null;
@@ -84,6 +141,16 @@ public class DAOTema extends DAOControlador{
         
         return temas;
     }
+    
+    /**
+     * @author Juan Pablo Ospina
+     * @param titulo
+     * @param descripcion
+     * @param referencias
+     * @param Visitas
+     * @return
+     * @throws Exception 
+     */
     public int AgregarTema(String titulo,String descripcion,String referencias,int Visitas) throws Exception{
         String sql_insert="INSERT INTO temas(titulo,descripcion,referencias,visitas) values(?,?,?,?)";
         PreparedStatement ps;
@@ -107,6 +174,13 @@ public class DAOTema extends DAOControlador{
         }
         return v;
     }
+    
+    /**
+     * @author Juan Pablo Ospina
+     * @param titulo
+     * @return
+     * @throws Exception 
+     */
     public int ObtenerID(String titulo) throws Exception{
         ResultSet rs = null;
         PreparedStatement st = null;
@@ -130,6 +204,12 @@ public class DAOTema extends DAOControlador{
     
     }
     
+    /**
+     * @author Johan Romero
+     * @param filtro
+     * @return
+     * @throws Exception 
+     */
     public ListaTemas buscarTitulos(String filtro) throws Exception {
         ListaTemas temas = new ListaTemas();
         PreparedStatement st = null;

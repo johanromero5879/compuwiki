@@ -1,6 +1,7 @@
 package controladores;
 
 import controladores.listas.ListaTemas;
+import modelos.Tema;
 import modelos.dao.DAOTema;
 import vistas.PanelCrear_1;
 /**
@@ -20,6 +21,9 @@ public class ControlTema {
         return daoTema.obtenerMasConsultados();
     }
 
+    public Tema TemasAmostrar(int id) throws Exception  {
+        return daoTema.TemasAmostrar(id);
+    }
     
     public ListaTemas buscarTitulos(String filtro) throws Exception{
         filtro = filtro.trim().toLowerCase();
