@@ -138,6 +138,7 @@ public class Inicio extends javax.swing.JFrame {
         barraApp1 = new vistas.BarraApp();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Compuwiki");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         setSize(new java.awt.Dimension(0, 0));
