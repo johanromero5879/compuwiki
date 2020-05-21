@@ -74,7 +74,7 @@ public class Inicio extends javax.swing.JFrame {
                     carta.link.addMouseListener(new MouseAdapter(){
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            //System.out.println(tema.getId());
+                            mostrarInterfazTema(tema.getId());
                         }
                         
                     });
@@ -86,6 +86,16 @@ public class Inicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             dispose();
             throw ex;
+        }
+    }
+    
+    private void mostrarInterfazTema(int id){
+        try {
+            informacion tema_info = new informacion(this, controlTema.TemasAmostrar(id));
+            setVisible(false);
+            tema_info.setVisible(true);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "No se ha encontrado el tema");
         }
     }
     
@@ -233,7 +243,12 @@ public class Inicio extends javax.swing.JFrame {
         String text = busqueda.getText().trim();
         if(!text.isEmpty()){
             try{
-                
+                int id = controlTema.obtenerId(text);
+                if(id > 0){
+                    mostrarInterfazTema(id);
+                }else{
+                    throw new Exception("El tema "+text+" no fue encontrado");
+                }
             }catch(Exception ex){
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
